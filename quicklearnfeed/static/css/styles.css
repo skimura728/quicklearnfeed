@@ -1,0 +1,101 @@
+:root {
+    --mergin-top-bar: 100px;
+}
+#top-bar {
+    position: fixed;
+    top: 0;
+    height: var(--mergin-top-bar);
+    width: 100%;
+    display: flex; /* 横並びにするためにflexboxを使用 */
+    justify-content: space-between; /* 両端に配置 */
+    align-items: center; /* 縦中央揃え */
+    background-color: #333;
+    padding: 0 10px;
+    user-select: none;
+}
+
+#title,
+#summary {
+    flex: 1; /* 各要素の幅を均等に分ける */
+    height: var(--mergin-top-bar);
+    color: white;
+    background-color: #333;
+    text-align: left;
+    overflow: hidden; /* はみ出た部分を隠す */
+    white-space: normal; /* テキストの改行を許可 */
+    word-wrap: break-word; /* 単語の途中で改行を許可 */
+}
+
+#title {
+    font-size: 18px;
+    font-weight: bold;
+    max-width: 48%; /* 幅の最大値を設定 */
+}
+
+#summary {
+    font-size: 14px;
+    max-width: 48%; /* 幅の最大値を設定 */
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin-top:var(--mergin-top-bar);
+}
+
+#categories-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: auto;
+}
+
+.category {
+    width: 80%;
+    margin: 20px 0;
+}
+
+.category h2 {
+    background-color: #333;
+    color: white;
+    padding: 10px;
+    user-select:none;
+}
+
+.news-grid {
+    display: flex;
+    gap: 10px;
+    overflow-x: visible;
+    white-space: nowrap
+}
+
+.news-item {
+    min-width: 200px;
+    background: white;
+    padding: 10px;
+    text-align: center;
+    border-radius: 5px;
+    user-select:none;
+}
+
+.news-item img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+
+.news-item h3 {
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+*:focus {
+    outline: none;
+}
+	       
+.focused {
+    border: 3px solid blue !important;  /* 上書きを防ぐために !important を追加 */
+    background-color: rgba(0, 0, 255, 0.2); /* フォーカス時の背景色を青系に */
+    outline: 3px solid blue; /* `outline` も追加して視認性UP */
+}

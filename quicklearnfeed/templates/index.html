@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Categories</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+  <!-- 画面上部にタイトルと概要を表示するためのコンテナ -->
+  <header id="top-bar">
+    <div id="title">Title:</div>
+    <div id="summary">Abstruct:</div>
+  </header>
+    
+  <div id="categories-container"></div>
+  <div id="news-detail-container" style="display:none;"></div>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
