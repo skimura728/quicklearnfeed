@@ -1,0 +1,2 @@
+recursive-include quicklearnfeed *.html *.css *.js
+include LICENSE.txt
