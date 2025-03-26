@@ -11,6 +11,7 @@ setup(
         'feedparser',
         'requests',
         'beautifulsoup4',
+        'python-dotenv',
     ],
 
     entry_points="""

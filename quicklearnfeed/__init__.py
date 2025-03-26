@@ -3,6 +3,12 @@ import google.generativeai as genai
 import feedparser
 import requests
 from bs4 import BeautifulSoup
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+API_KEY = os.getenv("GOOGLE_API_KEY")
 
 app = Flask(__name__)
 
@@ -23,7 +29,7 @@ RSS_FEEDS = {
     "Golf": "https://feeds.bbci.co.uk/sport/golf/rss.xml",
     "Rugby": "https://feeds.bbci.co.uk/sport/rugby-union/rss.xml"
 }
-genai.configure(api_key="REDACTED")
+genai.configure(api_key=API_KEY)
 model= genai.GenerativeModel("gemini-1.5-pro")
 
 @app.route("/")
