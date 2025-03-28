@@ -10,7 +10,7 @@
     justify-content: space-between; /* 両端に配置 */
     align-items: center; /* 縦中央揃え */
     background-color: #333;
-    padding: 0 10px;
+    padding: 0 10px;     /* user-select: none; */
     user-select: none;
 }
 
@@ -35,6 +35,20 @@
 #summary {
     font-size: 14px;
     max-width: 48%; /* 幅の最大値を設定 */
+}
+
+#result {
+    width: 300px;
+    height: 100vh;
+    background-color: #f9f9f9;
+    box-shadow: -5px 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    overflow-y: auto;
+    display: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 1000;
 }
 
 body {

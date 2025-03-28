@@ -10,6 +10,8 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentFocusIndex = null;
     let isDataLoaded = false;    
 
+    document.getElementById('top-bar').blur();
+
     fetch('/api/categories')
         .then(response => response.json())
         .then(categoryList => {
@@ -197,9 +199,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // キーイベントを監視
     document.addEventListener("keydown", (event) => {
-	if (viewingDetail && event.key == "Backspace") {
+	if (event.key === "Backspace" || event.key === "ArrowLeft") {
+	    if (viewingDetail) {
 		event.preventDefault();
 		backToList();
+	    }else{
+		closeResult();
+	    }
 	}
     });
 
@@ -211,6 +217,12 @@ document.addEventListener("DOMContentLoaded", () => {
         viewingDetail = false;
         container.style.display = "block";
         newsDetailContainer.style.display = "none";
+    }
+
+    // resultを閉じる関数
+    function closeResult() {
+      document.getElementById("result").style.display = "none";
+      document.body.style.marginRight = "0"; // 右側の領域を元に戻す
     }
 
     // Abstruct取得の遅延処理
@@ -255,4 +267,40 @@ document.addEventListener("DOMContentLoaded", () => {
 	}, 500);
     }
 
+    ["title","summary"].forEach(id =>{
+	const element = document.getElementById(id);
+	if (element){
+	    element.addEventListener("mouseup", async () => {
+		const selectedText = window.getSelection().toString().trim();
+		if (selectedText &&  /^[a-zA-Z]+$/.test(selectedText)) {
+		    // APIで単語の意味を取得
+		    const apiUrl = `https://api.dictionaryapi.dev/api/v2/entries/en/${selectedText}`;
+
+		    try {
+			const response = await fetch(apiUrl);
+			if (!response.ok) {
+			    throw new Error("Word not found");
+			}
+
+			const data = await response.json();
+			const meanings = data[0]?.meanings?.[0]?.definitions?.[0]?.definition;
+			// 結果エリアに意味を表示
+			document.getElementById("definition").innerHTML =
+			    `<strong>${selectedText}:</strong> ${meanings || "No definition found"}`;
+
+			// resultエリアを表示
+			document.getElementById("result").style.display = "block";
+			document.body.style.marginRight = "300px"; // 右側の領域を広げる
+
+		    } catch (error) {
+			document.getElementById("definition").innerHTML =
+			    `<strong>${selectedText}:</strong> Meaning not found.`;
+
+			document.getElementById("result").style.display = "block";
+			document.body.style.marginRight = "300px"; // 右側の領域を広げる
+		    }
+		}
+	    });
+	}
+    });
 });
