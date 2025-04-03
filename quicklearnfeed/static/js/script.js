@@ -158,12 +158,22 @@ document.addEventListener("DOMContentLoaded", () => {
             newItems[newItemIndex].focus();
 
 	    // フォーカスが当たったタイルが見切れないようにスクロール
-            newItems[newItemIndex].scrollIntoView({
-		behavior: 'smooth', // スムーズにスクロール
-		block: 'nearest',   // 最寄のスクロール位置に合わせる
-		inline: 'center'    // タイルが中央にくるようにスクロール
-
-            });
+	    let topBarHeight = document.getElementById("top-bar").offsetHeight;
+            let itemRect = newItems[newItemIndex].getBoundingClientRect();
+            let containerRect = container.getBoundingClientRect();
+            let offsetTop = itemRect.top - containerRect.top;
+        
+            if (itemRect.top < topBarHeight) {
+		container.scrollBy({
+                    top: offsetTop - topBarHeight,
+                    behavior: "smooth"
+		});
+            } else if (itemRect.bottom > window.innerHeight) {
+		container.scrollBy({
+                    top: itemRect.bottom - window.innerHeight,
+                    behavior: "smooth"
+		});
+            }
 
 	    // 概要も更新
 	    currentFocusIndex = newItems[newItemIndex].dataset.index;
