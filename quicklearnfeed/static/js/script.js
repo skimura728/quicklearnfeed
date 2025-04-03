@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			newsArray.forEach((news, index) => {
 			    const item = document.createElement("div");
 			    item.classList.add("news-item");
-			    item.tabIndex = 0; // タイルにフォーカスを設定
+			    item.tabIndex = -1; // disable tab 
 			    item.dataset.link = news.link;
 			    item.dataset.index = index;
 
@@ -90,7 +90,8 @@ document.addEventListener("DOMContentLoaded", () => {
             console.warn("Key pressed before data load:", event.key);
             return;
 	}
-	
+	event.preventDefault();
+
 	let categories = document.querySelectorAll(".category");
 	let currentCategory = categories[currentCategoryIndex];
 	let currentItems = currentCategory.querySelectorAll(".news-item");
@@ -199,6 +200,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // キーイベントを監視
     document.addEventListener("keydown", (event) => {
+	event.preventDefault();
 	if (event.key === "Backspace" || event.key === "ArrowLeft") {
 	    if (viewingDetail) {
 		event.preventDefault();
