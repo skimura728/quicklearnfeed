@@ -243,6 +243,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	clearTimeout(requestTimeout); //Cancel the previous request
 	requestTimeout = setTimeout(() => {
+	    if (document.activeElement !== item){
+		return; //If the focus is lost, not make the request
+	    }
+	    
 	    const link = item.dataset.link;
 	    const title = item.querySelector("h3").textContent;
 
@@ -275,8 +279,18 @@ document.addEventListener("DOMContentLoaded", () => {
             .catch(error => {
                 console.error("Article summary error:", error);
             });
-	}, 500);
+	}, 1000);
     }
+
+    function cancelSummaryRequest() {
+	clearTimeout(requestTimeout);
+    }
+
+    const newsItems = document.querySelectorAll(".news-item");
+    newsItems.forEach(item => {
+	item.addEventListener("focus", () => fetchSummary(item));
+	item.addEventListener("blur", cancelSummaryRequest);
+    });
 
     ["title","summary"].forEach(id =>{
 	const element = document.getElementById(id);
