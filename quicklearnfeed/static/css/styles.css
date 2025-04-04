@@ -6,34 +6,34 @@
     top: 0;
     height: var(--mergin-top-bar);
     width: 100%;
-    display: flex; /* 横並びにするためにflexboxを使用 */
-    justify-content: space-between; /* 両端に配置 */
-    align-items: center; /* 縦中央揃え */
+    display: flex; /* Use flexbox to align them horizontally */
+    justify-content: space-between; /* Use flexbox to align them at both ends */
+    align-items: center; /* Vertically center-aligned */
     background-color: #333;
     padding: 0 10px;     /* user-select: none; */
 }
 
 #title,
 #summary {
-    flex: 1; /* 各要素の幅を均等に分ける */
+    flex: 1; /* Distribute the width evenly across each element */
     height: var(--mergin-top-bar);
     color: white;
     background-color: #333;
     text-align: left;
-    overflow: hidden; /* はみ出た部分を隠す */
-    white-space: normal; /* テキストの改行を許可 */
-    word-wrap: break-word; /* 単語の途中で改行を許可 */
+    overflow: hidden; /* Hide the overflowing content */
+    white-space: normal; /* Allow text wrapping */
+    word-wrap: break-word; /* Allow word breaking */
 }
 
 #title {
     font-size: 18px;
     font-weight: bold;
-    max-width: 48%; /* 幅の最大値を設定 */
+    max-width: 48%; /* Set the maximum width */
 }
 
 #summary {
     font-size: 14px;
-    max-width: 48%; /* 幅の最大値を設定 */
+    max-width: 48%; /* Set the maximum width */
 }
 
 #result {
@@ -108,7 +108,7 @@ body {
 }
 	       
 .focused {
-    border: 3px solid blue !important;  /* 上書きを防ぐために !important を追加 */
-    background-color: rgba(0, 0, 255, 0.2); /* フォーカス時の背景色を青系に */
-    outline: 3px solid blue; /* `outline` も追加して視認性UP */
+    border: 3px solid blue !important;  /* Add !important to prevent overrides */
+    background-color: rgba(0, 0, 255, 0.2); /* Change the background color to blue when focused */
+    outline: 3px solid blue; /* Add an `outline` to improve visibility */
 }

@@ -71,13 +71,13 @@ def scrape():
         return jsonify({"Error": "URL parameter is required"}), 400
 
     try:
-        # BBCのページにリクエストを送る
+        # Article fetch request
         print(url)
         headers = {"User-Agent": "Mozilla/5.0"}
         response = requests.get(url, headers=headers)
         response.raise_for_status()
 
-        #BeautifulSoupでHTML解析
+        #Get text-block with BeautifulSoup
         soup = BeautifulSoup(response.text, "html.parser")
 
         article = soup.find("article")
@@ -95,7 +95,7 @@ def scrape():
 
 def get_summary_from_gemini(lang, maxlen, text):
     try:
-        # Gemini APIを呼び出して要約を依頼
+        # Call the Gemini API to request a summary
         prompt = f"以下のテキストの要点を{lang}で{maxlen}文字にまとめてください:\n\n{text}"
         response = model.generate_content(prompt)
         print("Absturuct:",response.text)

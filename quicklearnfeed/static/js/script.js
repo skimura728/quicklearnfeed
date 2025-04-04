@@ -17,19 +17,19 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(categoryList => {
 	    categories = categoryList;
 
-	    //各カテゴリごとにニュースを取得
+	    //Fetch news by category
 	    let categoryPromises = categoryList.map(category => {
 		return fetch(`/api/news/${category}`)
 		    .then(response => response.json())
 		    .then(newsArray => {
 			const categoryDiv = document.createElement("div");
 			categoryDiv.classList.add("category");
-			categoryDiv.innerHTML = `<h2>${category}</h2>`; // カテゴリタイトル
+			categoryDiv.innerHTML = `<h2>${category}</h2>`; // Category Title
 
 			const grid = document.createElement("div");
 			grid.classList.add("news-grid");
 
-			//各カテゴリに記事を追加
+			//Add articles to each category
 			newsArray.forEach((news, index) => {
 			    const item = document.createElement("div");
 			    item.classList.add("news-item");
@@ -37,50 +37,50 @@ document.addEventListener("DOMContentLoaded", () => {
 			    item.dataset.link = news.link;
 			    item.dataset.index = index;
 
-			    // サムネイル画像（ダミー画像を使用）
+			    // Thumbnail image
 			    const thumbnail = document.createElement("img");
 			    thumbnail.src = news.thumbnail;
 			    thumbnail.alt = `Thumbnail for ${news.title}`;
 			    
-			    // タイトル
+			    // Title
 			    const title = document.createElement("h3");
 			    title.textContent = news.title;
 			    title.style.fontSize="10px";
 		    
-			    // 日付（現在の日付を自動設定）
+			    // Publication date
 			    const date = document.createElement("p");
 			    date.textContent = news.published;
 			    date.style.fontSize="8px";
 
-			    //タイルをカテゴリに追加
+			    //Add tile to category
 			    item.appendChild(thumbnail);
 			    item.appendChild(title);
 			    item.appendChild(date);
 			    grid.appendChild(item);
 			});
 
-			//カテゴリをコンテナに追加
+			//Add category to container
 			categoryDiv.appendChild(grid);
 			container.appendChild(categoryDiv);
 		    })
-		    .catch(error => console.error("エラー:", error));
+		    .catch(error => console.error("Error:", error));
 	    });
 			
-	    //初期フォーカス設定
+	    //Initial focus setting
 	    Promise.all(categoryPromises).then(() => {
 		setInitialFocus();
 		isDataLoaded = true;
 		console.log("All categories loaded successfully");
 	    });
 	})
-        .catch(error => console.error("カテゴリ取得エラー:", error));
+        .catch(error => console.error("Category fech error:", error));
 			    
     function setInitialFocus() {
 	const firstItem = container.querySelector(".news-item");
 	if (firstItem){
 	    firstItem.classList.add("focused");
 	    firstItem.focus();
-	    currentFocusIndex = firstItem.dataset.index; //最初のインデックスを保持
+	    currentFocusIndex = firstItem.dataset.index; //Keep the initial index
 	    fetchSummary(firstItem);
 	}
     }
@@ -97,37 +97,37 @@ document.addEventListener("DOMContentLoaded", () => {
 	let currentItems = currentCategory.querySelectorAll(".news-item");
 
 	switch (event.key) {
-	case "ArrowRight": // 右キー（次のタイル）
+	case "ArrowRight": // Right arrow key（next tile）
 	    console.log ("ArrowRight");
             if (currentItemIndex < currentItems.length - 1) {
 		updateFocus(currentItemIndex + 1, currentCategoryIndex);
 	    }
             break;
-	case "ArrowLeft": // 左キー（前のタイル）
+	case "ArrowLeft": // Left arrow key（Previous tile）
 	    console.log ("ArrowLeft");
             if (currentItemIndex > 0) {
 		updateFocus(currentItemIndex - 1, currentCategoryIndex);
             }
             break;
-	case "ArrowDown": // 下キー（次のカテゴリ）
+	case "ArrowDown": // Down arrow key（Next category）
 	    console.log ("ArrowDown");
             if (currentCategoryIndex < categories.length - 1) {
 		updateFocus(0, currentCategoryIndex + 1);
             }
             break;
-	case "ArrowUp": // 上キー（前のカテゴリ）
+	case "ArrowUp": // Up arrow key（Previous category）
 	    console.log ("ArrowUp");
             if (currentCategoryIndex > 0) {
 		updateFocus(0, currentCategoryIndex - 1);
             }
             break;
-	case "Enter": // Enterキー (記事詳細)
+	case "Enter": // Enter key (Article details)
 	    showDetail(currentItems[currentItemIndex]);
 	    break;
 	}
     });
 
-    // フォーカスの更新
+    // Focus update
     function updateFocus(newItemIndex, newCategoryIndex) {
 	let categories = document.querySelectorAll(".category");
         let currentCategory = categories[currentCategoryIndex];
@@ -137,12 +137,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	if (!newCategory) {
              console.warn(`Invalid category index: ${newCategoryIndex}`);
-             return; // ここでフォーカス更新せず終了
+             return; // Exit without updating the focus
 	 }
 
 	if (newItems.length === 0) {
             console.warn(`No items found in category ${newCategoryIndex}`);
-            return; // アイテムがない場合も終了
+            return; // Exit even if there are no items
 	}
 
 	if (newItemIndex >= newItems.length || newItemIndex < 0) {
@@ -157,7 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
             newItems[newItemIndex].classList.add("focused");
             newItems[newItemIndex].focus();
 
-	    // フォーカスが当たったタイルが見切れないようにスクロール
+	    // Scroll to ensure the focused tile is fully visible
 	    let topBarHeight = document.getElementById("top-bar").offsetHeight;
             let itemRect = newItems[newItemIndex].getBoundingClientRect();
             let containerRect = container.getBoundingClientRect();
@@ -175,8 +175,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		});
             }
 
-	    // 概要も更新
 	    currentFocusIndex = newItems[newItemIndex].dataset.index;
+	    // Update the summary
 	    fetchSummary(newItems[newItemIndex]);
 	}
 
@@ -197,7 +197,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <div class="modal">
             <div class="modal-content">
             <button id="close-modal">戻る</button>
-            <p>外部リンクを開いてます...</p>
+            <p>Opening an external link...</p>
             </dvi>
 　　　　　</div>
         `;
@@ -208,7 +208,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
-    // キーイベントを監視
+    // Monitor key events
     document.addEventListener("keydown", (event) => {
 	event.preventDefault();
 	if (event.key === "Backspace" || event.key === "ArrowLeft") {
@@ -221,6 +221,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
     });
 
+    //Close the article detail tab
     function backToList() {
 	console.log ("backToList");
 	if(externalWindow && !externalWindow.closed){
@@ -231,50 +232,48 @@ document.addEventListener("DOMContentLoaded", () => {
         newsDetailContainer.style.display = "none";
     }
 
-    // resultを閉じる関数
+    // Close the word definition area
     function closeResult() {
       document.getElementById("result").style.display = "none";
-      document.body.style.marginRight = "0"; // 右側の領域を元に戻す
+      document.body.style.marginRight = "0"; // Restore the right-side area
     }
 
-    // Abstruct取得の遅延処理
+    // Delay handling for summary retrieval
     function fetchSummary(item) {
 
-	clearTimeout(requestTimeout); //前回のリクエストをキャンセル
+	clearTimeout(requestTimeout); //Cancel the previous request
 	requestTimeout = setTimeout(() => {
 	    const link = item.dataset.link;
 	    const title = item.querySelector("h3").textContent;
 
-            // /api/scrapeを呼び出して記事の要約を取得
+            // Retrieve the article summary
             fetch(`/api/scrape?url=${encodeURIComponent(link)}`)
 		.then(response => response.json())
 		.then(data => {
                 if (data.summary && currentFocusIndex === item.dataset.index) {
 
 		    console.log("Title:", title);
-		    console.log("Abstruct:", data.summary);
+		    console.log("Summary:", data.summary);
 
-		    // タイトルと概要を画面上部に表示
+		    // Display the title and summary at the top of the screen
                     const topBar = document.getElementById("top-bar");
                     const titleElement = document.getElementById("title");
                     const summaryElement = document.getElementById("summary");
 
-		    //既存の内容をクリア
+		    // Clear existing content
 		    titleElement.textContent = '';
 		    summaryElement.textContent ='';
 
                     titleElement.textContent = `Title: ${title}`;
-		    summaryElement.textContent = `Abstruct:${data.summary}`;
+		    summaryElement.textContent = `Summary:${data.summary}`;
 
                     topBar.appendChild(titleElement);
                     topBar.appendChild(summaryElement);
-
-                    // 画面上部に追加
                     document.body.appendChild(topBar);
                 }
             })
             .catch(error => {
-                console.error("記事の要約取得エラー:", error);
+                console.error("Article summary error:", error);
             });
 	}, 500);
     }
@@ -285,7 +284,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	    element.addEventListener("mouseup", async () => {
 		const selectedText = window.getSelection().toString().trim();
 		if (selectedText &&  /^[a-zA-Z]+$/.test(selectedText)) {
-		    // APIで単語の意味を取得
+		    // Retrieve the meaning of a word
 		    const apiUrl = `https://api.dictionaryapi.dev/api/v2/entries/en/${selectedText}`;
 
 		    try {
@@ -296,20 +295,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			const data = await response.json();
 			const meanings = data[0]?.meanings?.[0]?.definitions?.[0]?.definition;
-			// 結果エリアに意味を表示
+			// Display the meaning in the result area
 			document.getElementById("definition").innerHTML =
 			    `<strong>${selectedText}:</strong> ${meanings || "No definition found"}`;
 
-			// resultエリアを表示
+			// Display the result area
 			document.getElementById("result").style.display = "block";
-			document.body.style.marginRight = "300px"; // 右側の領域を広げる
+			document.body.style.marginRight = "300px"; // Expand both panals on the right side
 
 		    } catch (error) {
 			document.getElementById("definition").innerHTML =
 			    `<strong>${selectedText}:</strong> Meaning not found.`;
 
 			document.getElementById("result").style.display = "block";
-			document.body.style.marginRight = "300px"; // 右側の領域を広げる
+			document.body.style.marginRight = "300px"; // Expand both panals on the right side
 		    }
 		}
 	    });
