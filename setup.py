@@ -12,6 +12,7 @@ setup(
         'requests',
         'beautifulsoup4',
         'python-dotenv',
+        'gunicorn',
     ],
 
     entry_points="""
