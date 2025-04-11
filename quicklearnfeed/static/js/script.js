@@ -45,7 +45,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			    // Title
 			    const title = document.createElement("h3");
 			    title.textContent = news.title;
-			    title.style.fontSize="10px";
 		    
 			    // Publication date
 			    const date = document.createElement("p");

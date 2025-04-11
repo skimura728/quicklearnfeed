@@ -51,7 +51,7 @@
 }
 
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Helvetica Neue', sans-serif;
     background-color: #f4f4f4;
     margin-top:var(--mergin-top-bar);
 }
@@ -99,8 +99,9 @@ body {
 
 .news-item h3 {
     white-space: normal;
-    word-wrap: break-word;
     overflow-wrap: break-word;
+    font-size: 12px;
+    margin: 0 0 6px;
 }
 
 *:focus {
