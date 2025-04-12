@@ -1,0 +1,35 @@
+name: Bug Report
+description: バグの報告はこちらから / Report a bug here
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: input
+    id: environment
+    attributes:
+      label: 実行環境 / Environment
+      placeholder: 例: Windows 11, Chrome 122
+  - type: textarea
+    id: description
+    attributes:
+      label: バグの内容 / Bug Description
+      description: どのような問題が発生していますか？ / What went wrong?
+      placeholder: 例: ログインボタンが反応しません。
+  - type: textarea
+    id: steps
+    attributes:
+      label: 再現手順 / Steps to Reproduce
+      description: 問題を再現する手順を書いてください / Steps to reproduce the issue
+      placeholder: |
+        1. トップページにアクセス
+        2. 「ログイン」ボタンをクリック
+        3. 無反応
+  - type: textarea
+    id: expected
+    attributes:
+      label: 本来の挙動 / Expected Behavior
+      placeholder: ログイン画面に遷移するはず
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: スクリーンショット / Screenshots (if applicable)
+      description: UIの問題など視覚的なものがあれば添付してください
