@@ -8,16 +8,16 @@ body:
     attributes:
       label: 機能概要 / Summary
       description: 提案する機能の概要 / A brief summary of the feature
-      placeholder: 例: ユーザーがプロフィール画像をアップロードできるようにする
+      placeholder: "例: ユーザーがプロフィール画像をアップロードできるようにする"
   - type: textarea
     id: motivation
     attributes:
       label: 背景・目的 / Motivation
       description: なぜこの機能が必要なのか？ / Why is this feature needed?
-      placeholder: 例: 他のユーザーとの識別がしやすくなるため
+      placeholder: "例: 他のユーザーとの識別がしやすくなるため"
   - type: textarea
     id: details
     attributes:
       label: 詳細仕様 / Details
       description: どのように動作する想定か？ / Describe how the feature should work
-      placeholder: 例: 設定画面にアップロードボタンを追加...
+      placeholder: "例: 設定画面にアップロードボタンを追加..."
