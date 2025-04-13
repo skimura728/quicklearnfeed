@@ -7,13 +7,13 @@ body:
     id: environment
     attributes:
       label: 実行環境 / Environment
-      placeholder: 例: Windows 11, Chrome 122
+      placeholder: "例: Windows 11, Chrome 122"
   - type: textarea
     id: description
     attributes:
       label: バグの内容 / Bug Description
       description: どのような問題が発生していますか？ / What went wrong?
-      placeholder: 例: ログインボタンが反応しません。
+      placeholder: "例: ログインボタンが反応しません。"
   - type: textarea
     id: steps
     attributes:
