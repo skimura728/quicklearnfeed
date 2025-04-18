@@ -201,6 +201,16 @@ document.addEventListener("DOMContentLoaded", () => {
 	});
     });
 
+    //display article details on mouse click
+    container.addEventListener("click", (event) => {
+	const item = event.target.closest(".news-item");
+	if (!item)
+	    return;
+	if (item.classList.contains("focused")) {
+            showDetail(item);
+	}
+    });
+
     function showDetail(item) {
         const link = item.dataset.link;
         if (!link) return;
