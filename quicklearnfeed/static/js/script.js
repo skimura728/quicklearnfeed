@@ -183,6 +183,24 @@ document.addEventListener("DOMContentLoaded", () => {
         currentCategoryIndex = newCategoryIndex;
     }
 
+    container.addEventListener("mouseover", (event) => {
+	const item = event.target.closest(".news-item");
+	if (!item) return;
+
+	const categories = document.querySelectorAll(".category");
+
+	categories.forEach((category, catIdx) => {
+            const items = category.querySelectorAll(".news-item");
+            items.forEach((el, itemIdx) => {
+		if (el === item) {
+                    if (catIdx !== currentCategoryIndex || itemIdx !== currentItemIndex) {
+			updateFocus(itemIdx, catIdx);
+                    }
+		}
+            });
+	});
+    });
+
     function showDetail(item) {
         const link = item.dataset.link;
         if (!link) return;
@@ -326,5 +344,36 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 	    });
 	}
+    });
+
+    //for mobile
+    //support tap event
+    container.addEventListener("touchstart", handleFocusByPointer, { passive: true });
+    function handleFocusByPointer(event) {
+	const targetItem = event.target.closest(".news-item");
+	if (targetItem) {
+            const newCategoryDiv = targetItem.closest(".category");
+            const newCategoryIndex = [...container.querySelectorAll(".category")].indexOf(newCategoryDiv);
+            const newItemIndex = [...newCategoryDiv.querySelectorAll(".news-item")].indexOf(targetItem);
+            updateFocus(newItemIndex, newCategoryIndex);
+	}
+    }
+
+    //support double tap event
+    let lastTapTime = 0;
+    const doubleTapThreshold = 300; //Double tap within 300ms
+
+    container.addEventListener("touchend", (e) => {
+	const currentTime = new Date().getTime();
+	const tapLength = currentTime - lastTapTime;
+
+	const touchedItem = e.target.closest(".news-item");
+
+	if (touchedItem && tapLength < doubleTapThreshold && tapLength > 0) {
+            //Open article detail on double tap
+            showDetail(touchedItem);
+	}
+
+	lastTapTime = currentTime;
     });
 });
