@@ -133,6 +133,13 @@ body {
     --mergin-top-bar: 72px;
   }
 
+  #top-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0 10px;
+    height: auto;
+  }
+ 
   #title {
     font-size: 14px;
     -webkit-line-clamp: 2;
