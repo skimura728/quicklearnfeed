@@ -202,14 +202,18 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     //display article details on mouse click
-    container.addEventListener("click", (event) => {
-	const item = event.target.closest(".news-item");
-	if (!item)
-	    return;
-	if (item.classList.contains("focused")) {
-            showDetail(item);
-	}
-    });
+    const isMobile = /iPhone|Android/.test(navigator.userAgent);
+
+    if (!isMobile) {
+	container.addEventListener("click", (event) => {
+	    const item = event.target.closest(".news-item");
+	    if (!item)
+		return;
+	    if (item.classList.contains("focused")) {
+		showDetail(item);
+	    }
+	});
+    }
 
     function showDetail(item) {
         const link = item.dataset.link;
@@ -218,12 +222,17 @@ document.addEventListener("DOMContentLoaded", () => {
 	console.log(link);
 
         viewingDetail = true;
+	if (isMobile){
+	    window.location.href = link;
+            return;
+	}
+
         container.style.display = "none";
         newsDetailContainer.style.display = "block";
 	newsDetailContainer.innerHTML = `
           <div class="modal">
             <div class="modal-content">
-            <button id="close-modal">戻る</button>
+            <button id="close-modal">Back</button>
             <p>Opening an external link...</p>
             </dvi>
 　　　　　</div>
