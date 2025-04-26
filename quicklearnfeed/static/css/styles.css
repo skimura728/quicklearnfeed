@@ -1,10 +1,10 @@
 :root {
-    --mergin-top-bar: 120px;
+    --margin-top-bar: 120px;
 }
 #top-bar {
     position: fixed;
     top: 0;
-    height: var(--mergin-top-bar);
+    height: var(--margin-top-bar);
     width: 100%;
     display: flex; /* Use flexbox to align them horizontally */
     align-items: center; /* Vertically center-aligned */
@@ -15,7 +15,7 @@
 
 #title,
 #summary {
-    height: var(--mergin-top-bar);
+    height: var(--margin-top-bar);
     color: white;
     background-color: #2c3e50;
     text-align: left;
@@ -58,7 +58,7 @@
 body {
     font-family: 'Helvetica Neue', sans-serif;
     background-color: #f0f2f5;
-    margin-top:var(--mergin-top-bar);
+    margin-top:var(--margin-top-bar);
 }
 
 #categories-container {
@@ -94,7 +94,7 @@ body {
     text-align: center;
     border-radius: 5px;
     user-select:none;
-    translation:
+    transition:
 	background-color 0.3s ease,
 	border-width 0.3s ease,
 	border-color 0.3s ease,
@@ -130,7 +130,7 @@ body {
 /* for mobile */
 @media screen and (max-width: 600px) {
   :root {
-    --mergin-top-bar: 72px;
+    --margin-top-bar: 72px;
   }
 
   #top-bar {
@@ -156,8 +156,8 @@ body {
 
   #result {
     width: 100vw;
-    height: calc(100vh - var(--mergin-top-bar));
-    top: var(--mergin-top-bar);
+    height: calc(100vh - var(--margin-top-bar));
+    top: var(--margin-top-bar);
     right: 0;
     border-radius: 0;
   }

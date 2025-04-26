@@ -247,7 +247,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="modal-content">
             <button id="close-modal">Back</button>
             <p>Opening an external link...</p>
-            </dvi>
+            </div>
 　　　　　</div>
         `;
 
