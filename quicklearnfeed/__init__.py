@@ -15,21 +15,21 @@ API_KEY = os.getenv("GOOGLE_API_KEY")
 app = Flask(__name__)
 
 RSS_FEEDS = ([
-    ("General": "https://feeds.bbci.co.uk/news/rss.xml"),
-    ("World": "https://feeds.bbci.co.uk/news/world/rss.xml"),
-    ("Business": "https://feeds.bbci.co.uk/news/business/rss.xml"),
-    ("Politics": "https://feeds.bbci.co.uk/news/politics/rss.xml"),
-    ("Health": "https://feeds.bbci.co.uk/news/health/rss.xml"),
-    ("Science & Environment": "https://feeds.bbci.co.uk/news/science_and_environment/rss.xml"),
-    ("Technology": "https://feeds.bbci.co.uk/news/technology/rss.xml"),
-    ("Entertainment & Arts": "https://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml"),
-    ("Education": "https://feeds.bbci.co.uk/news/education/rss.xml"),
-    ("Sport": "https://feeds.bbci.co.uk/sport/rss.xml"),
-    ("Football": "https://feeds.bbci.co.uk/sport/football/rss.xml"),
-    ("F1": "https://feeds.bbci.co.uk/sport/formula1/rss.xml"),
-    ("Tennis": "https://feeds.bbci.co.uk/sport/tennis/rss.xml"),
-    ("Golf": "https://feeds.bbci.co.uk/sport/golf/rss.xml"),
-    ("Rugby": "https://feeds.bbci.co.uk/sport/rugby-union/rss.xml")
+    ("General", "https://feeds.bbci.co.uk/news/rss.xml"),
+    ("World", "https://feeds.bbci.co.uk/news/world/rss.xml"),
+    ("Business", "https://feeds.bbci.co.uk/news/business/rss.xml"),
+    ("Politics", "https://feeds.bbci.co.uk/news/politics/rss.xml"),
+    ("Health", "https://feeds.bbci.co.uk/news/health/rss.xml"),
+    ("Science & Environment", "https://feeds.bbci.co.uk/news/science_and_environment/rss.xml"),
+    ("Technology", "https://feeds.bbci.co.uk/news/technology/rss.xml"),
+    ("Entertainment & Arts", "https://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml"),
+    ("Education", "https://feeds.bbci.co.uk/news/education/rss.xml"),
+    ("Sport", "https://feeds.bbci.co.uk/sport/rss.xml"),
+    ("Football", "https://feeds.bbci.co.uk/sport/football/rss.xml"),
+    ("F1", "https://feeds.bbci.co.uk/sport/formula1/rss.xml"),
+    ("Tennis", "https://feeds.bbci.co.uk/sport/tennis/rss.xml"),
+    ("Golf", "https://feeds.bbci.co.uk/sport/golf/rss.xml"),
+    ("Rugby", "https://feeds.bbci.co.uk/sport/rugby-union/rss.xml")
 ])
 
 genai.configure(api_key=API_KEY)
