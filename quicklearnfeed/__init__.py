@@ -103,7 +103,7 @@ def scrape():
 
         # print(text_content);
         summary = get_summary_from_gemini("英語", "200", text_content)
-        if summary.startsWith("Error:"):
+        if summary.startswith("Error:"):
             return jsonify({"summary": "Summary is unavailable now."})
         cached_summaries[url] = summary
         return jsonify({"summary":summary})
