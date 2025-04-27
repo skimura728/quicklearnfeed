@@ -5,6 +5,8 @@ import requests
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 import os
+import time
+from collections import OrderedDict
 
 load_dotenv()
 
@@ -12,23 +14,24 @@ API_KEY = os.getenv("GOOGLE_API_KEY")
 
 app = Flask(__name__)
 
-RSS_FEEDS = {
-    "General": "https://feeds.bbci.co.uk/news/rss.xml",
-    "World": "https://feeds.bbci.co.uk/news/world/rss.xml",
-    "Business": "https://feeds.bbci.co.uk/news/business/rss.xml",
-    "Politics": "https://feeds.bbci.co.uk/news/politics/rss.xml",
-    "Health": "https://feeds.bbci.co.uk/news/health/rss.xml",
-    "Science & Environment": "https://feeds.bbci.co.uk/news/science_and_environment/rss.xml",
-    "Technology": "https://feeds.bbci.co.uk/news/technology/rss.xml",
-    "Entertainment & Arts": "https://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml",
-    "Education": "https://feeds.bbci.co.uk/news/education/rss.xml",
-    "Sport": "https://feeds.bbci.co.uk/sport/rss.xml",
-    "Football": "https://feeds.bbci.co.uk/sport/football/rss.xml",
-    "F1": "https://feeds.bbci.co.uk/sport/formula1/rss.xml",
-    "Tennis": "https://feeds.bbci.co.uk/sport/tennis/rss.xml",
-    "Golf": "https://feeds.bbci.co.uk/sport/golf/rss.xml",
-    "Rugby": "https://feeds.bbci.co.uk/sport/rugby-union/rss.xml"
-}
+RSS_FEEDS = ([
+    ("General": "https://feeds.bbci.co.uk/news/rss.xml"),
+    ("World": "https://feeds.bbci.co.uk/news/world/rss.xml"),
+    ("Business": "https://feeds.bbci.co.uk/news/business/rss.xml"),
+    ("Politics": "https://feeds.bbci.co.uk/news/politics/rss.xml"),
+    ("Health": "https://feeds.bbci.co.uk/news/health/rss.xml"),
+    ("Science & Environment": "https://feeds.bbci.co.uk/news/science_and_environment/rss.xml"),
+    ("Technology": "https://feeds.bbci.co.uk/news/technology/rss.xml"),
+    ("Entertainment & Arts": "https://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml"),
+    ("Education": "https://feeds.bbci.co.uk/news/education/rss.xml"),
+    ("Sport": "https://feeds.bbci.co.uk/sport/rss.xml"),
+    ("Football": "https://feeds.bbci.co.uk/sport/football/rss.xml"),
+    ("F1": "https://feeds.bbci.co.uk/sport/formula1/rss.xml"),
+    ("Tennis": "https://feeds.bbci.co.uk/sport/tennis/rss.xml"),
+    ("Golf": "https://feeds.bbci.co.uk/sport/golf/rss.xml"),
+    ("Rugby": "https://feeds.bbci.co.uk/sport/rugby-union/rss.xml")
+])
+
 genai.configure(api_key=API_KEY)
 model= genai.GenerativeModel("gemini-1.5-pro")
 
@@ -64,11 +67,23 @@ def get_news_by_category(category):
     # print(filtered_news)
     return jsonify(filtered_news)
 
+cached_summaries = {}
+server_start_time = time.time()
+
 @app.route("/api/scrape", methods=["GET"])
 def scrape():
+    global server_start_time, cached_summaries
+
+    if time.time() - server_start_time > 86400:
+        cached_summaries = {}
+        server_start_time = time.time()
+
     url = request.args.get("url")
     if not url:
         return jsonify({"Error": "URL parameter is required"}), 400
+
+    if url in cached_summaries:
+        return jsonify({"summary": cached_summaries[url]})
 
     try:
         # Article fetch request
@@ -88,6 +103,7 @@ def scrape():
 
         # print(text_content);
         summary = get_summary_from_gemini("英語", "200", text_content)
+        cached_summaries[url] = summary
         return jsonify({"summary":summary})
 
     except requests.exceptions.RequestException as e:
