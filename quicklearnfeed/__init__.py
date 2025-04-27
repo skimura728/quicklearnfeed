@@ -103,7 +103,8 @@ def scrape():
 
         # print(text_content);
         summary = get_summary_from_gemini("英語", "200", text_content)
-        cached_summaries[url] = summary
+        if not summary.startswith("Error:"):
+            cached_summaries[url] = summary
         return jsonify({"summary":summary})
 
     except requests.exceptions.RequestException as e:
