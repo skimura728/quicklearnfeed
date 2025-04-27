@@ -14,7 +14,7 @@ API_KEY = os.getenv("GOOGLE_API_KEY")
 
 app = Flask(__name__)
 
-RSS_FEEDS = ([
+RSS_FEEDS = OrderedDict([
     ("General", "https://feeds.bbci.co.uk/news/rss.xml"),
     ("World", "https://feeds.bbci.co.uk/news/world/rss.xml"),
     ("Business", "https://feeds.bbci.co.uk/news/business/rss.xml"),
