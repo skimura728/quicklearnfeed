@@ -81,6 +81,11 @@ def scrape():
     url = request.args.get("url")
     if not url:
         return jsonify({"Error": "URL parameter is required"}), 400
+    
+    try:
+        maxlen = int(request.args.get("maxlen", "200"))
+    except ValueError:
+        maxlen = 200
 
     if url in cached_summaries:
         return jsonify({"summary": cached_summaries[url]})
@@ -102,7 +107,7 @@ def scrape():
         text_content = " ".join(paragraphs)
 
         # print(text_content);
-        summary = get_summary_from_gemini("英語", "200", text_content)
+        summary = get_summary_from_gemini("英語", maxlen, text_content)
         if summary.startswith("Error:"):
             return jsonify({"summary": "Summary is unavailable now."})
         cached_summaries[url] = summary

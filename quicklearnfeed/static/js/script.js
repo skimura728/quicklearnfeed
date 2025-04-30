@@ -298,9 +298,10 @@ document.addEventListener("DOMContentLoaded", () => {
 	    
 	    const link = item.dataset.link;
 	    const title = item.querySelector("h3").textContent;
+		const maxlen = isMobile ? 100 : 200;
 
             // Retrieve the article summary
-            fetch(`/api/scrape?url=${encodeURIComponent(link)}`)
+            fetch(`/api/scrape?url=${encodeURIComponent(link)}&maxlen=${maxlen}`)
 		.then(response => response.json())
 		.then(data => {
                 if (data.summary && currentFocusIndex === item.dataset.index) {
