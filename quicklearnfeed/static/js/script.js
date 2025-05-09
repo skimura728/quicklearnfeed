@@ -1,3 +1,31 @@
+function sendAnalyticsEvent(eventName, params) {
+    if (typeof gtag === 'function') {
+        gtag('event', eventName, params);
+    } else {
+        console.warn("gtag not available");
+    }
+}
+
+function logNewsTileClick(title, category) {
+    sendAnalyticsEvent('news_tile_click', {
+        title: title,
+        category: category
+    });
+}
+
+function logSummaryExpand(title, summary) {
+    sendAnalyticsEvent('summary_expand', {
+        title: title,
+        summary: summary.substring(0, 100)
+    });
+}
+
+function logDictionaryLookup(word) {
+    sendAnalyticsEvent('dictionary_lookup', {
+        word: word
+    });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     // Register Service Worker
     if ('serviceWorker' in navigator) {
@@ -230,7 +258,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function showDetail(item) {
         const link = item.dataset.link;
+
         if (!link) return;
+
+	const title = item.querySelector("h3")?.textContent || "Unknown";
+	const categoryElement = item.closest(".category")?.querySelector("h2");
+	const category = categoryElement ? categoryElement.textContent : "Unknown";
+	logNewsTileClick(title, category)
 
 	console.log(link);
 
@@ -324,6 +358,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     topBar.appendChild(titleElement);
                     topBar.appendChild(summaryElement);
                     document.body.appendChild(topBar);
+		    const summary = data.summary ? data.summary : "Unknown"
+		    logSummaryExpand(title, summary)
                 }
             })
             .catch(error => {
@@ -348,7 +384,9 @@ document.addEventListener("DOMContentLoaded", () => {
 	    element.addEventListener("mouseup", async () => {
 		const selectedText = window.getSelection().toString().trim();
 		if (selectedText &&  /^[a-zA-Z]+$/.test(selectedText)) {
+
 		    // Retrieve the meaning of a word
+		    logDictionaryLookup(selectedText)
 		    const apiUrl = `https://api.dictionaryapi.dev/api/v2/entries/en/${selectedText}`;
 
 		    try {
