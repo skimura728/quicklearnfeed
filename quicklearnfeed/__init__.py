@@ -44,7 +44,7 @@ def home():
 
     if not os.path.exists(model_path):
         try:
-            subprocess.run(["bash", "download_model.sh"], check=True)
+            subprocess.run(["sh", "download_model.sh"], check=True)
         except subprocess.CalledProcessError as e:
             return f"Model download failed: {e}", 500
 
