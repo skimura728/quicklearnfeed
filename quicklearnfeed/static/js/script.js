@@ -169,6 +169,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Focus update
     function updateFocus(newItemIndex, newCategoryIndex) {
+
+	document.getElementById("title").textContent = 'Title:';
+	document.getElementById("summary").textContent = 'Summary:';
+
 	let categories = document.querySelectorAll(".category");
         let currentCategory = categories[currentCategoryIndex];
         let newCategory = categories[newCategoryIndex];

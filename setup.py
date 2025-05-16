@@ -7,12 +7,14 @@ setup(
     include_package_data=True,
     install_requires=[
         'Flask',
+        'flask-cors',
         'google-generativeai',
         'feedparser',
         'requests',
         'beautifulsoup4',
         'python-dotenv',
         'gunicorn',
+        'llama-cpp-python==0.2.24'
     ],
 
     entry_points="""

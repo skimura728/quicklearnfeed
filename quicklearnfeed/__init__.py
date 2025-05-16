@@ -1,10 +1,12 @@
 from flask import Flask, render_template, jsonify, request
+from flask_cors import CORS
 import google.generativeai as genai
 import feedparser
 import requests
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
-import os
+import os, subprocess
+from llama_cpp import Llama
 import time
 from collections import OrderedDict
 
@@ -13,6 +15,7 @@ load_dotenv()
 API_KEY = os.getenv("GOOGLE_API_KEY")
 
 app = Flask(__name__)
+CORS(app)
 
 RSS_FEEDS = OrderedDict([
     ("General", "https://feeds.bbci.co.uk/news/rss.xml"),
@@ -37,6 +40,14 @@ model= genai.GenerativeModel("gemini-1.5-pro")
 
 @app.route("/")
 def home():
+    model_path = "models/mistral.gguf"
+
+    if not os.path.exists(model_path):
+        try:
+            subprocess.run(["bash", "download_model.sh"], check=True)
+        except subprocess.CalledProcessError as e:
+            return f"Model download failed: {e}", 500
+
     return render_template("index.html")
 
 @app.route("/api/categories", methods=["GET"])
@@ -106,16 +117,36 @@ def scrape():
         paragraphs = [div.get_text() for div in article.find_all("div", {"data-component": "text-block"})]
         text_content = " ".join(paragraphs)
 
-        # print(text_content);
-        summary = get_summary_from_gemini("英語", maxlen, text_content)
-        if summary.startswith("Error:"):
-            return jsonify({"summary": "Summary is unavailable now."})
+        summary = get_summary_from_llama("英語", maxlen, text_content)
+
         cached_summaries[url] = summary
+        print ("summary:",summary)
         return jsonify({"summary":summary})
 
     except requests.exceptions.RequestException as e:
         return jsonify({"Error": str(e)}), 500
 
+
+
+def get_summary_from_llama(lang, maxlen, text):
+    try:
+        llm = Llama(model_path="./models/mistral.gguf", n_ctx=4096)
+        if len(text) > 1024:
+            text = text[:1024] + "..."
+        prompt = f"""### Instruction:
+Please summarize the following article in 2-3 concise sentences in {lang}, no more than {maxlen} characters.
+
+### Input:
+{text}
+
+### Response:"""
+        output = llm(prompt, max_tokens=300)
+        summary =  output["choices"][0]["text"]
+        del llm
+        return summary
+    except Exception as e:
+        return f"Error: {str(e)}"
+    
 def get_summary_from_gemini(lang, maxlen, text):
     try:
         # Call the Gemini API to request a summary
@@ -148,4 +179,4 @@ def main():
     app.run('0.0.0.0', 8000)
     
 if __name__ == '__main__':
-    app.run('0.0.0.0', 8000, debug=True)
+    app.run('0.0.0.0', 8000, debug=False)
