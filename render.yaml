@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: quicklearnfeed
+    env: python
+    buildCommand: |
+      chmod +x download_model.sh
+      ./download_model.sh
+    startCommand: gunicorn quicklearnfeed.__init__:app
+    
