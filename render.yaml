@@ -5,5 +5,5 @@ services:
     buildCommand: |
       chmod +x download_model.sh
       sh ./download_model.sh
-    startCommand: gunicorn quicklearnfeed.__init__:app
+    startCommand: gunicorn -w 1 -b 0.0.0.0:8000 quicklearnfeed.__init__:app
     
