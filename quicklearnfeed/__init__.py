@@ -130,7 +130,7 @@ def scrape():
 
 def get_summary_from_llama(lang, maxlen, text):
     try:
-        llm = Llama(model_path="./models/mistral.gguf", n_ctx=4096)
+        llm = Llama(model_path="./models/mistral.gguf", n_ctx=1024)
         if len(text) > 1024:
             text = text[:1024] + "..."
         prompt = f"""### Instruction:
