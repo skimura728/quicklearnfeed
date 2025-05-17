@@ -5,8 +5,7 @@ import feedparser
 import requests
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
-import os, subprocess
-from llama_cpp import Llama
+import os
 import time
 from collections import OrderedDict
 
@@ -40,14 +39,6 @@ model= genai.GenerativeModel("gemini-1.5-pro")
 
 @app.route("/")
 def home():
-    model_path = "models/mistral.gguf"
-
-    if not os.path.exists(model_path):
-        try:
-            subprocess.run(["sh", "download_model.sh"], check=True)
-        except subprocess.CalledProcessError as e:
-            return f"Model download failed: {e}", 500
-
     return render_template("index.html")
 
 @app.route("/api/categories", methods=["GET"])
@@ -127,23 +118,20 @@ def scrape():
         return jsonify({"Error": str(e)}), 500
 
 
-
 def get_summary_from_llama(lang, maxlen, text):
     try:
-        llm = Llama(model_path="./models/mistral.gguf", n_ctx=256)
-        if len(text) > 256:
-            text = text[:256] + "..."
-        prompt = f"""### Instruction:
-Please summarize the following article in 2-3 concise sentences in {lang}, no more than {maxlen} characters.
-
-### Input:
-{text}
-
-### Response:"""
-        output = llm(prompt, max_tokens=64)
-        summary =  output["choices"][0]["text"]
-        del llm
-        return summary
+        tunnel_url = "https://ear-trackbacks-nat-london.trycloudflare.com/llama"
+        payload = {
+            "text": text,
+            "lang": lang,
+            "maxlen": maxlen
+        }
+        headers = {
+            "Content-Type": "application/json"
+        }
+        response = requests.post(tunnel_url, json=payload, headers=headers, timeout=15)
+        response.raise_for_status()
+        return response.json().get("summary", "summary is unavailable now")
     except Exception as e:
         return f"Error: {str(e)}"
     

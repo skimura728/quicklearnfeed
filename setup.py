@@ -14,7 +14,6 @@ setup(
         'beautifulsoup4',
         'python-dotenv',
         'gunicorn',
-        'llama-cpp-python==0.2.24'
     ],
 
     entry_points="""
