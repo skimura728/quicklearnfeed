@@ -108,7 +108,7 @@ def scrape():
         paragraphs = [div.get_text() for div in article.find_all("div", {"data-component": "text-block"})]
         text_content = " ".join(paragraphs)
 
-        summary = get_summary_from_llama("英語", maxlen, text_content)
+        summary = get_summary_from_llama("English", maxlen, text_content)
 
         cached_summaries[url] = summary
         print ("summary:",summary)
@@ -120,7 +120,10 @@ def scrape():
 
 def get_summary_from_llama(lang, maxlen, text):
     try:
-        tunnel_url = "https://ear-trackbacks-nat-london.trycloudflare.com/llama"
+        tunnel_url = os.getenv("TUNNEL_URL")
+        if not tunnel_url:
+            return "Error: TUNNEL_URL environment variable is not set"
+        
         payload = {
             "text": text,
             "lang": lang,
