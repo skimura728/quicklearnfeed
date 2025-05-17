@@ -108,6 +108,9 @@ def scrape():
         paragraphs = [div.get_text() for div in article.find_all("div", {"data-component": "text-block"})]
         text_content = " ".join(paragraphs)
 
+        if len(text_content) > 1024:
+            text_content = text_content[:1024] + "..."
+
         summary = get_summary_from_llama("English", maxlen, text_content)
 
         cached_summaries[url] = summary
