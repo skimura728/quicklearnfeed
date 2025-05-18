@@ -1,54 +1,73 @@
-==========================
-Quick English Learning App
-==========================
+QuickLearnFeed - AI-Powered News Summarizer
+===========================================
 
-Purpose
-=======
+QuickLearnFeed is an AI-assisted English news reader with summarization features.
 
-This app is designed to help people who often give up reading English news articles because they are too long and detailed.
-By providing summaries, the app allows users to quickly grasp the main points and easily look up unfamiliar words.
+📌 What's New
+-------------
+- Now powered by TinyLlama (1.1B) running locally via llama.cpp (GGUF).
+- External API usage (e.g. Gemini) has been replaced with a local model to avoid API limits and ensure privacy.
+- Cloudflare Tunnel is used to securely connect the Render-hosted frontend to your local LLM backend.
 
+🧩 Architecture
+--------------
+::
 
-Tools Version
-=============
-:Python: 3.10.12
-:pip:    22.0.2
+    [User]
+      │
+      ▼
+    [Render (Flask API)]
+      │ (Cloudflare Tunnel)
+      ▼
+    [Local PC (FastAPI + TinyLlama GGUF)]
 
-Installation and Startup Instructions
-=====================================
+⚙️ Local LLM Backend Setup
+--------------------------
+This app connects to a local summarization backend powered by TinyLlama.  
+Please set up the backend by following instructions in the separate repository:
 
-Clone the code from the repository and set up a venv environment underneath it.::
+🔗 https://github.com/skimura728/llama-local-api
 
-  $ git clone https://github.com/skimura728/quicklearnfeed.git
-  $ cd quicklearnfeed
-  $ python3 -m venv venv
-  $ source venv/bin/activate
-  (venv) $ pip install .
+In short:
 
-API Key Setup
-=============
+1. Clone the repository:
+   ::
 
-Before running the app, create a `.env` file in the project root directory and add your API key. The file should look like this::
+     git clone https://github.com/skimura728/llama-local-api.git
+     cd llama-local-api
 
-  GOOGLE_API_KEY=your-api-key-here
+2. Follow the instructions in its `README.md` to download the model, install dependencies, and run:
+   ::
 
-You can get your API key from the Google Cloud Console.  
-Without setting this key, the app will not be able to generate summaries.
+     python llama_api.py
 
+3. Then, start a Cloudflare Tunnel:
+   ::
 
-Run the Application
-====================
+     cloudflared tunnel --url http://localhost:8000
 
-After installing, run the app with the following command::
+4. Finally, set this environment variable on Render:
+   ::
 
-  (venv) $ quicklearnfeed
-   * Running on http://127.0.0.1:8000/
+     TUNNEL_URL=https://<your-tunnel-name>.trycloudflare.com/llama
 
+📝 Version
+----------
+v1.1.0 - 2025-05-18
+- Migrated from Gemini API to TinyLlama (local GGUF).
+- Cloudflare Tunnel integration.
+- Improved summary reliability and independence from rate limits.
 
-Development Steps
-=================
+📜 Changelog
+============
 
-1. Checkout the repository
-2. Install using the following steps::
+v1.1.0 (2025-05-18)
+-----------------------------------------------
+- Summary engine switched to TinyLlama 1.1B (local GGUF via llama-cpp-python)
+- Removed dependency on Gemini API
+- Cloudflare Tunnel support added
 
-   (venv) $ pip install -e .
+v1.0.0 (2025-05-02)
+-------------------
+- Initial release using Gemini API
+- RSS news feed + English summary
