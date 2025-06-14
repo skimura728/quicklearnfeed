@@ -135,7 +135,7 @@ def get_summary_from_llama(lang, maxlen, text):
         headers = {
             "Content-Type": "application/json"
         }
-        response = requests.post(tunnel_url, json=payload, headers=headers, timeout=15)
+        response = requests.post(tunnel_url, json=payload, headers=headers, timeout=120)
         response.raise_for_status()
         return response.json().get("summary", "summary is unavailable now")
     except Exception as e:
