@@ -76,7 +76,8 @@ else:
 
 # CEFR Dictionary Preloaded
 import json
-with open("cefr_dict.json", "r") as f:
+dict_path = os.path.join(os.path.dirname(__file__), "cefr_dict.json")
+with open(dict_path, "r", encoding="utf-8") as f:
     CEFR_WORDS = json.load(f)
 
 def extract_cefr_words(text, levels=["A1", "A2", "B1", "B2", "C1"]):
