@@ -8,6 +8,12 @@ from dotenv import load_dotenv
 import os
 import time
 from collections import OrderedDict
+from collections import Counter
+from opensearchpy import OpenSearch
+import re
+import hashlib
+from urllib.parse import urlparse
+from datetime import datetime, timezone
 
 load_dotenv()
 
@@ -34,8 +40,68 @@ RSS_FEEDS = OrderedDict([
     ("Rugby", "https://feeds.bbci.co.uk/sport/rugby-union/rss.xml")
 ])
 
+STOP_WORDS = set([
+    "a", "an", "the", "is", "are", "was", "were", "be", "to", "of", "and", "in", "on", "for", "with", "at", "by", "from",
+    "it", "this", "that", "these", "those", "as", "i", "you", "he", "she", "they", "we", "me", "him", "her", "them", "my",
+    "your", "his", "its", "our", "their", "or", "but", "not", "so", "if", "because", "when", "while", "do", "does", "did",
+    "have", "has", "had", "will", "would", "can", "could", "shall", "should", "may", "might", "must"
+])
+
 genai.configure(api_key=API_KEY)
 model= genai.GenerativeModel("gemini-1.5-pro")
+
+# OpenSeach Client
+env = os.environ.get("ENV", "local")
+
+if env == "production":
+    parsed = urlparse(os.environ["OPENSEARCH_URL"])
+    host = parsed.hostname
+    port = parsed.port or 443
+    use_ssl = parsed.scheme == "https"
+    os_client = OpenSearch(
+        hosts=[{"host": host, "port": port}],
+        http_auth=("admin", os.environ["OPENSEARCH_PASSWORD"]),
+        use_ssl=use_ssl,
+        verify_certs=False
+    )
+else:
+    # local development settings
+    password = os.environ["OPENSEARCH_PASSWORD"]
+    os_client = OpenSearch(
+        hosts=[{"host": "localhost", "port": 9200}],
+        http_auth=("admin", password),
+        use_ssl=False,
+        verify_certs=False
+    )
+
+# CEFR Dictionary Preloaded
+import json
+with open("cefr_dict.json", "r") as f:
+    CEFR_WORDS = json.load(f)
+
+def extract_cefr_words(text, levels=["A1", "A2", "B1", "B2", "C1"]):
+    text = text.lower()
+    words = re.findall(r"\b[a-z]+\b", text)
+    word_counts = Counter(words)
+
+    cefr_counts = {}
+    for level in levels:
+        vocab = set(CEFR_WORDS[level])
+        cefr_counts[level] = {
+            w: c for w, c in word_counts.items() if w in vocab and w not in STOP_WORDS
+        }
+    return cefr_counts
+
+# index articles into OpenSearch
+def index_to_opensearch(article_id, url, summary, cefr_words):
+    doc = {
+        "article_id": article_id,
+        "url": url,
+        "summary": summary,
+        "cefr_words": cefr_words,
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    }
+    os_client.index(index="qlf_articles", id=article_id, body=doc)
 
 @app.route("/")
 def home():
@@ -79,6 +145,10 @@ def scrape():
     if time.time() - server_start_time > 86400:
         cached_summaries = {}
         server_start_time = time.time()
+        try:
+            os_client.indices.delete(index="qlf_articles")
+        except Exception as e:
+            print(f"Failed to delete OpenSearch index: {e}")
 
     url = request.args.get("url")
     if not url:
@@ -90,7 +160,7 @@ def scrape():
         maxlen = 200
 
     if url in cached_summaries:
-        return jsonify({"summary": cached_summaries[url]})
+        return jsonify(cached_summaries[url])
 
     try:
         # Article fetch request
@@ -111,11 +181,23 @@ def scrape():
         if len(text_content) > 1024:
             text_content = text_content[:1024] + "..."
 
-        summary = get_summary_from_llama("English", maxlen, text_content)
+        article_id = hashlib.sha256(url.encode()).hexdigest()
 
-        cached_summaries[url] = summary
+        summary = get_summary_from_llama("English", maxlen, text_content)
+        if summary.startswith("Error:"):
+            return jsonify({"summary": "Summary is unavailable now",
+                            "cefr_words": "Words are unavailable now"})
+        
+        cefr_words = extract_cefr_words(text_content)
+        index_to_opensearch(article_id, url, summary, cefr_words)
+
+        cached_summaries[url] = {
+            "summary": summary,
+            "cefr_words": cefr_words
+        }
+        print ("URL:",url)
         print ("summary:",summary)
-        return jsonify({"summary":summary})
+        return jsonify(cached_summaries[url])
 
     except requests.exceptions.RequestException as e:
         return jsonify({"Error": str(e)}), 500

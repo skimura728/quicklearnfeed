@@ -41,6 +41,49 @@
     padding-right: 40px;
 }
 
+#cefr-section {
+  position: fixed;
+  top: var(--margin-top-bar);
+  width: 100%;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #1e1e1e;
+  color: white;
+  font-family: sans-serif;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+#cefr-controls label {
+  font-weight: bold;
+  margin-right: 8px;
+}
+
+#cefr-select {
+  padding: 4px 8px;
+  font-size: 14px;
+  background-color: #2a2a2a;
+  color: white;
+  border: 1px solid #555;
+  border-radius: 4px;
+}
+
+#cefr-words {
+  flex: 1;
+  font-size: 14px;
+}
+
+.cefr-word {
+  margin-right: 12px;
+}
+
+.cefr-word strong {
+  font-weight: bold;
+  margin-right: 4px;
+}
+
 #result {
     width: 300px;
     height: 100vh;
@@ -56,6 +99,7 @@
 }
 
 body {
+    margin-top: calc(var(--margin-top-bar) + 60px);
     font-family: 'Helvetica Neue', sans-serif;
     background-color: #f0f2f5;
     margin-top:var(--margin-top-bar);

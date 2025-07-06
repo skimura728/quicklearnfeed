@@ -26,6 +26,27 @@ function logDictionaryLookup(word) {
     });
 }
 
+function renderCefrWords(cefrWords, level) {
+  const cefrWordsContainer = document.getElementById("cefr-words");
+
+  // Clear previous Content
+  cefrWordsContainer.textContent = "";
+
+  const cefr = cefrWords?.[level] || {};
+  const sorted = Object.entries(cefr).sort((a, b) => b[1] - a[1]);
+
+  if (sorted.length === 0) {
+    cefrWordsContainer.textContent = `No ${level} words found in this article.`;
+    return;
+  }
+
+  const spans = sorted.map(([word, count]) => {
+    return `<span class="cefr-word"><strong>${word}</strong>(${count})</span>`;
+  });
+
+  cefrWordsContainer.innerHTML = `Top ${level} words: ` + spans.join(" ");
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     // Register Service Worker
     if ('serviceWorker' in navigator) {
@@ -172,6 +193,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	document.getElementById("title").textContent = 'Title:';
 	document.getElementById("summary").textContent = 'Summary:';
+	document.getElementById("cefr-words").textContent = "";
 
 	let categories = document.querySelectorAll(".category");
         let currentCategory = categories[currentCategoryIndex];
@@ -286,7 +308,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <button id="close-modal">Back</button>
             <p>Opening an external link...</p>
             </div>
-　　　　　</div>
+		</div>
         `;
 
 	externalWindow = window.open(link, "_blank");
@@ -348,20 +370,24 @@ document.addEventListener("DOMContentLoaded", () => {
 		    console.log("Summary:", data.summary);
 
 		    // Display the title and summary at the top of the screen
-                    const topBar = document.getElementById("top-bar");
-                    const titleElement = document.getElementById("title");
-                    const summaryElement = document.getElementById("summary");
+            	    const topBar = document.getElementById("top-bar");
+            	    const titleElement = document.getElementById("title");
+            	    const summaryElement = document.getElementById("summary");
 
 		    // Clear existing content
 		    titleElement.textContent = '';
-		    summaryElement.textContent ='';
+		    summaryElement.textContent = "Loading...";
 
-                    titleElement.textContent = `Title: ${title}`;
-		    summaryElement.textContent = `Summary:${data.summary}`;
+            titleElement.textContent = `Title: ${title}`;
+		    summaryElement.textContent = `Summary: ${data.summary}`;
 
-                    topBar.appendChild(titleElement);
-                    topBar.appendChild(summaryElement);
-                    document.body.appendChild(topBar);
+			const level = document.getElementById("cefr-select").value || "A1";
+			renderCefrWords(data.cefr_words, level);
+			window.latestCefrWords = data.cefr_words; // Store the latest CEFR words
+
+            	    topBar.appendChild(titleElement);
+            	    topBar.appendChild(summaryElement);
+            	    document.body.appendChild(topBar);
 		    const summary = data.summary ? data.summary : "Unknown"
 		    logSummaryExpand(title, summary)
                 }
@@ -451,4 +477,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	lastTapTime = currentTime;
     });
+
+	// Handle the CEFR word selection
+	document.getElementById("cefr-select").addEventListener("change", () => {
+		const level = document.getElementById("cefr-select").value || "A1";
+ 		renderCefrWords(window.latestCefrWords, level);
+	});
 });
